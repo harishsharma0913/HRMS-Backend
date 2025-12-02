@@ -47,11 +47,6 @@ const JobPostSchema = new mongoose.Schema(
       enum: ["Active", "Closed"],
       default: "Active",
     },
-
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
   },
   { timestamps: true }
 );

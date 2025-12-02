@@ -12,6 +12,8 @@ const { updateLeaveStatus, getFilteredLeavesAdmin, getAllLeavesAdmin, addComment
 const { getAllTickets, getFilteredTickets, updateTicketStatus, getTicketById } = require('../Controllers/supportTicketController');
 const { createJob, getJobs, updateJob, createJobApplication } = require('../Controllers/addJobController');
 const { validateCreateJob } = require('../Midalware/jobvalidation');
+const { createTask } = require('../Controllers/taskController');
+const validateAddTask = require('../Midalware/addTaskValidator');
 
 const router = express.Router();
 
@@ -61,5 +63,6 @@ router.post('/admin/create-job', validateCreateJob, createJob);
 router.get('/admin/jobs', getJobs);
 router.patch('/admin/job/:id', updateJob);
 router.post('/apply', createJobApplication)
+router.post('/admin/create-task', validateAddTask, createTask);
 
 module.exports = router;
