@@ -19,7 +19,7 @@ const taskSchema = new mongoose.Schema(
 
     assignTo: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       required: [true, "Assigned employee is required"],
     },
 
