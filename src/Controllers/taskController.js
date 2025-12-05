@@ -1,6 +1,6 @@
 const Task = require("../Models/taskAddSchema");
 const userModel = require("../Models/userSingUpSchema");
-// ---------------------- CREATE TASK ----------------------
+// ---------------------- admin CREATE TASK ----------------------
 exports.createTask = async (req, res) => {
   try {
     const { title, description, assignTo, dueDate, priority, status, createdBy } = req.body;
@@ -38,7 +38,7 @@ exports.createTask = async (req, res) => {
   }
 };
 
-// ---------------------- GET ALL TASKS ----------------------
+// ---------------------- admin GET ALL TASKS ----------------------
 exports.getAllTasks = async (req, res) => {
   try {
     const page = Number(req.query.page);
@@ -128,8 +128,7 @@ exports.getAllTasks = async (req, res) => {
   }
 };
 
-
-// ---------------------- UPDATE TASK ----------------------
+// ---------------------- user UPDATE TASK ----------------------
 exports.updateTask = async (req, res) => {
   try {
     const { id } = req.params;
@@ -162,7 +161,7 @@ exports.updateTask = async (req, res) => {
   }
 };
 
-// ---------------------- DELETE TASK ----------------------
+// ---------------------- admin DELETE TASK ----------------------
 exports.deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
@@ -186,6 +185,60 @@ exports.deleteTask = async (req, res) => {
     res.status(500).json({
       status: false,
       message: error.message || "Failed to delete task",
+    });
+  }
+};
+
+// ---------------------- EMPLOYEE: GET ONLY MY TASKS (+ pagination + filters) ----------------------
+exports.getMyTasks = async (req, res) => {
+  try {
+    let { page , limit , search, status } = req.query;
+
+    const employeeId = req.user.id; // ⬅ middleware से आएगा (auth)
+    
+    page = Number(page);
+    limit = Number(limit);
+    const skip = (page - 1) * limit;
+
+    let filter = { assignTo: employeeId };  // ⬅ Important: सिर्फ employee के tasks
+
+    // 🔍 SEARCH (title + priority)
+    if (search) {
+      const s = search.trim();
+
+      filter.$or = [
+        { title: { $regex: s, $options: "i" } },
+        { priority: { $regex: s, $options: "i" } },
+      ];
+    }
+
+    // 🟦 STATUS FILTER
+    if (status && status !== "All") {
+      filter.status = status; // Pending | InProgress | Completed
+    }
+
+    // ▶ Fetch data
+    const tasks = await Task.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Task.countDocuments(filter);
+
+    res.status(200).json({
+      status: true,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      tasks,
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      status: false,
+      message: err.message || "Unable to fetch tasks",
     });
   }
 };

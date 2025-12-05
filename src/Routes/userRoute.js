@@ -7,6 +7,7 @@ const { applyLeave, getMyLeaves, updateLeaveStatus } = require('../Controllers/l
 const validateSupportTicket = require('../Midalware/supportTicketValidator');
 const { createSupportTicket, getTickets } = require('../Controllers/supportTicketController');
 const uploadImage = require('../Midalware/uploadImage');
+const { getMyTasks, updateTask } = require('../Controllers/taskController');
 
 
 const userRouter = express.Router();
@@ -19,5 +20,7 @@ userRouter.get('/leave/:id', verifyToken, isEmployee, getMyLeaves);
 userRouter.patch('/leave/:id', verifyToken, isEmployee, updateLeaveStatus);
 userRouter.post('/ticket/:id', verifyToken, isEmployee, uploadImage.single('attachments'), validateSupportTicket, createSupportTicket);
 userRouter.get('/ticket/:id', verifyToken, isEmployee, getTickets);
+userRouter.get('/tasks', verifyToken, isEmployee, getMyTasks);
+userRouter.put('/tasks/:id', verifyToken, isEmployee, updateTask);
 
 module.exports = userRouter;
