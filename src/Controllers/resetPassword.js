@@ -30,13 +30,27 @@ const sendOtp = async (req, res) => {
       },
     });
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+        // Professional Email Content
+    const mailOptions = {
+      from: `"HRMS Support" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Password Reset OTP",
-      text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
-    });
+      subject: "🔐 Your OTP for HRMS Password Reset",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+          <h2 style="color: #2F80ED;">Password Reset Request</h2>
+          <p>Hello,</p>
+          <p>We received a request to reset your password for your HRMS account.</p>
+          <p><strong>Your OTP is:</strong> <span style="font-size: 20px; color: #2F80ED;">${otp}</span></p>
+          <p>This OTP will expire in <strong>5 minutes</strong>.</p>
+          <p>If you did not request this, please ignore this email.</p>
+          <br>
+          <p>Thanks,<br><strong>HRMS Team</strong></p>
+        </div>
+      `,
+    };
 
+    await transporter.sendMail(mailOptions);
+    
     res.status(200).json({ status: true, message: "OTP sent successfully" });
   } catch (error) {
     res.status(500).json({ status: false, message: "Failed to send OTP" });
