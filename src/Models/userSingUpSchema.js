@@ -86,6 +86,17 @@ status:{
     ifscCode: { type: String, required: true },
     branchName: { type: String, required: true }
   },
+
+  otp: {
+  type: String,
+  default: null
+  },
+  
+  otpExpires: {
+  type: Date,
+  default: null
+  },
+
   token:{
     type:String,
     default:null

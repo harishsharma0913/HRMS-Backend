@@ -8,12 +8,19 @@ const validateSupportTicket = require('../Midalware/supportTicketValidator');
 const { createSupportTicket, getTickets } = require('../Controllers/supportTicketController');
 const uploadImage = require('../Midalware/uploadImage');
 const { getMyTasks, updateTask } = require('../Controllers/taskController');
+const { sendOtp, verifyOtp, resetPassword } = require('../Controllers/resetPassword');
 
 
 const userRouter = express.Router();
 
 userRouter.post('/', loginDataMatch, employeeLogin);
 userRouter.post("/logout", logout);
+
+// 🔓 Public Routes (No Login Required)
+userRouter.post("/send-otp", sendOtp);
+userRouter.post("/verify-otp", verifyOtp);
+userRouter.post("/reset-password", resetPassword);
+
 userRouter.get('/employee/me', verifyToken, isEmployee, getMyProfile);
 userRouter.post('/leave',verifyToken, isEmployee, applyLeave);
 userRouter.get('/leave/:id', verifyToken, isEmployee, getMyLeaves);
