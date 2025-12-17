@@ -53,9 +53,6 @@ const addTaskSchema = z.object({
     required_error: "Priority is required",
   }),
 
-  status: z.enum(["Pending", "In Progress", "Completed"], {
-    required_error: "Status is required",
-  }),
 });
 
 // Middleware

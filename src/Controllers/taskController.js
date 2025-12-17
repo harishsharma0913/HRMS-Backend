@@ -3,7 +3,7 @@ const userModel = require("../Models/userSingUpSchema");
 // ---------------------- admin CREATE TASK ----------------------
 exports.createTask = async (req, res) => {
   try {
-    const { title, description, assignTo, dueDate, priority, status, createdBy } = req.body;
+    const { title, description, assignTo, dueDate, priority, createdBy } = req.body;
 
     // Check if assigned user exists
     const userExists = await userModel.findById(assignTo);
@@ -20,7 +20,6 @@ exports.createTask = async (req, res) => {
       assignTo,
       dueDate,
       priority,
-      status,
       createdBy,
     });
 
@@ -154,6 +153,67 @@ exports.updateTask = async (req, res) => {
   } catch (error) {
     console.log(error);
 
+    res.status(500).json({
+      status: false,
+      message: error.message || "Failed to update task",
+    });
+  }
+};
+
+// ---------------------- ADMIN UPDATE TASK ----------------------
+exports.adminUpdateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      description,
+      assignTo,
+      dueDate,
+      priority,
+      createdBy
+    } = req.body;
+
+    // 🔎 Task exist check
+    const task = await Task.findById(id);
+    if (!task) {
+      return res.status(404).json({
+        status: false,
+        message: "Task not found",
+      });
+    }
+
+    // 👤 assignTo validation (agar change ho raha ho)
+    if (assignTo) {
+      const userExists = await userModel.findById(assignTo);
+      if (!userExists) {
+        return res.status(404).json({
+          status: false,
+          message: "Assigned employee not found",
+        });
+      }
+      task.assignTo = assignTo;
+    }
+
+    // 🛠 Update only provided fields
+    if (title !== undefined) task.title = title;
+    if (description !== undefined) task.description = description;
+    if (priority !== undefined) task.priority = priority;
+    if (dueDate !== undefined) task.dueDate = dueDate;
+    if (createdBy !== undefined) task.createdBy = createdBy
+
+    await task.save();
+
+    const updatedTask = await Task.findById(id)
+      .populate("assignTo", "fullName employeeId personalEmail");
+
+    res.status(200).json({
+      status: true,
+      message: "Task updated successfully (Admin)",
+      task: updatedTask,
+    });
+
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       status: false,
       message: error.message || "Failed to update task",

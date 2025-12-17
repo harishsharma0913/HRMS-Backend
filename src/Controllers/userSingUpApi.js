@@ -184,27 +184,6 @@ const getEmployee = async (req, res) => {
   }
 };
 
-// const updateEmployeeProfileImage = async (req, res) => {
-//   const { id } = req.params;
-//   const profileImage = req.file?.filename;
-
-//   if (!profileImage) return res.status(400).json({ message: "No image uploaded" });
-
-//   try {
-//     const employee = await userModel.findByIdAndUpdate(
-//       id,
-//       { "documents.profileImage": profileImage },
-//       { new: true }
-//     );
-
-//     if (!employee) return res.status(404).json({ message: "Employee not found" });
-
-//     res.status(200).json({ message: "Profile image updated", employee });
-//   } catch (err) {
-//     res.status(500).json({ message: "Server error", error: err.message });
-//   }
-// };
-
 const uploadEmployeeDocument = async (req, res) => {
   const { id } = req.params;
   const { key } = req.body; // 👈 dynamic field
@@ -240,7 +219,6 @@ const uploadEmployeeDocument = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 const updateEmployeePassword = async (req, res) => {
   const { id } = req.params;
