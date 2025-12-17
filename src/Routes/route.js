@@ -1,6 +1,6 @@
 const express = require('express');
 const validData = require('../Midalware/loginDataMatch');
-const {addEmployee, getEmployee, updateEmployeeProfileImage, updateEmployeePassword, updateEmployee, deleteEmployee} = require('../Controllers/userSingUpApi');
+const {addEmployee, getEmployee, updateEmployeeProfileImage, updateEmployeePassword, updateEmployee, deleteEmployee, uploadEmployeeDocument} = require('../Controllers/userSingUpApi');
 const validateEmployee = require('../Midalware/userSingUpMatch');
 const validateDepartment = require('../Midalware/departmentValidation');
 const uploadImage = require('../Midalware/uploadImage');
@@ -34,7 +34,9 @@ router.post(
   validateEmployee(), 
   addEmployee
 );
-router.patch("/update-profile-image/:id", uploadImage.single("profileImage"), updateEmployeeProfileImage);
+// router.patch("/update-profile-image/:id", uploadImage.single("profileImage"), updateEmployeeProfileImage);
+router.patch("/upload-document/:id", uploadImage.single("file"), uploadEmployeeDocument);
+
 router.patch("/update-password/:id", updateEmployeePassword);
 router.patch('/employee/:id',validateEmployee(true),updateEmployee);
 router.patch('/employee/delete/:id', deleteEmployee);
