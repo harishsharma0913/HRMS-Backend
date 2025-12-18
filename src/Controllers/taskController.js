@@ -84,7 +84,7 @@ exports.getAllTasks = async (req, res) => {
 
     // 🧲 FETCH RESULTS WITH PAGINATION
     const tasks = await Task.find(filter)
-      .populate("assignTo", "fullName employeeId")
+      .populate("assignTo", "_id fullName employeeId")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -162,6 +162,8 @@ exports.updateTask = async (req, res) => {
 
 // ---------------------- ADMIN UPDATE TASK ----------------------
 exports.adminUpdateTask = async (req, res) => {
+  console.log(req.body);
+  
   try {
     const { id } = req.params;
     const {
@@ -171,7 +173,7 @@ exports.adminUpdateTask = async (req, res) => {
       dueDate,
       priority,
       createdBy
-    } = req.body;
+    } = req.body;    
 
     // 🔎 Task exist check
     const task = await Task.findById(id);

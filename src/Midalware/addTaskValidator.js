@@ -57,6 +57,8 @@ const addTaskSchema = z.object({
 
 // Middleware
 const validateAddTask = (req, res, next) => {
+  console.log("hiiiiiiiiiiiiiiiiiiii");
+  
   try {
     addTaskSchema.parse(req.body);
     next();
