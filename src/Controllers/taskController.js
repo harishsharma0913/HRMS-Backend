@@ -102,6 +102,7 @@ exports.getAllTasks = async (req, res) => {
       createdAt: task.createdAt,
       assignTo: task.assignTo
         ? {
+            employee_Id: task.assignTo._id,
             fullName: task.assignTo.fullName,
             employeeId: task.assignTo.employeeId,
           }
