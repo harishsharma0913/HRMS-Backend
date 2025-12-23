@@ -23,16 +23,57 @@ exports.applyLeave = async (req, res) => {
 };
 
 // GET: Get all (filtered) leaves for employee
+// exports.getMyLeaves = async (req, res) => {
+//   try {
+//     const employeeId = req.params.id;
+//     const { status, type, from, to } = req.query;
+
+//     const filter = { employee: employeeId,
+//       status: { $ne: "Cancelled" },
+//      };
+
+//     // Apply filters if provided
+//     if (status && status !== "All") {
+//       filter.status = status;
+//     }
+
+//     if (type && type !== "All") {
+//       filter.leaveType = type;
+//     }
+
+//     if (from && to) {
+//       filter.startDate = {
+//         $gte: new Date(from),
+//         $lte: new Date(to),
+//       };
+//     }
+
+//     const leaves = await Leave.find(filter).sort({ createdAt: -1 });
+
+//     res.status(200).json({
+//       status: true,
+//       message: "Leaves fetched successfully",
+//       leave: leaves,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: false,
+//       message: error.message,
+//     });
+//   }
+// };
+// GET: Get all (filtered + paginated) leaves for employee
 exports.getMyLeaves = async (req, res) => {
   try {
     const employeeId = req.params.id;
-    const { status, type, from, to } = req.query;
+    const { status, type, from, to, page, limit } = req.query;
 
-    const filter = { employee: employeeId,
+    const filter = {
+      employee: employeeId,
       status: { $ne: "Cancelled" },
-     };
+    };
 
-    // Apply filters if provided
+    /* 🔹 Optional Filters */
     if (status && status !== "All") {
       filter.status = status;
     }
@@ -48,12 +89,31 @@ exports.getMyLeaves = async (req, res) => {
       };
     }
 
-    const leaves = await Leave.find(filter).sort({ createdAt: -1 });
+    /* 🔹 Pagination Logic */
+    const pageNumber = parseInt(page, 10);
+    const pageSize = parseInt(limit, 10);
+    const skip = (pageNumber - 1) * pageSize;
 
+    /* 🔹 Queries */
+    const [leaves, totalLeaves] = await Promise.all([
+      Leave.find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize),
+      Leave.countDocuments(filter),
+    ]);
+
+    /* 🔹 Response */
     res.status(200).json({
       status: true,
       message: "Leaves fetched successfully",
-      leave: leaves,
+      data: leaves,
+      pagination: {
+        totalRecords: totalLeaves,
+        currentPage: pageNumber,
+        totalPages: Math.ceil(totalLeaves / pageSize),
+        limit: pageSize,
+      },
     });
   } catch (error) {
     res.status(500).json({
