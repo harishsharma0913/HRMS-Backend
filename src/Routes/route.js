@@ -14,12 +14,19 @@ const { createJob, getJobs, updateJob, createJobApplication } = require('../Cont
 const { validateCreateJob } = require('../Midalware/jobvalidation');
 const { createTask, getAllTasks, deleteTask, adminUpdateTask } = require('../Controllers/taskController');
 const validateAddTask = require('../Midalware/addTaskValidator');
+const { sendOtp, verifyOtp, resetPassword } = require('../Controllers/adminForgotPassword');
 
 const router = express.Router();
 
 
 router.post('/admin', validData, loginAdmin);
 router.post('/logout', adminLogout);
+
+// 🔓 Public Routes (No Login Required)
+router.post("/send-otp", sendOtp);
+router.post("/verify-otp", verifyOtp);
+router.post("/reset-password", resetPassword);
+
 router.post(
   '/employee',
   uploadImage.fields([

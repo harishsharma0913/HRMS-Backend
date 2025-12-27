@@ -10,6 +10,14 @@ const schema = new mongoose.Schema({
         type: String,
         requied:true
     },
+    otp: {
+        type: String,
+        default: null
+    },
+    otpExpires: {
+        type: Date,
+        default: null
+    },
     token:{
         type:String,
         default: null
