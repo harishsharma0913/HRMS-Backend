@@ -18,7 +18,6 @@ const { sendOtp, verifyOtp, resetPassword } = require('../Controllers/adminForgo
 
 const router = express.Router();
 
-
 router.post('/admin', validData, loginAdmin);
 router.post('/logout', adminLogout);
 
